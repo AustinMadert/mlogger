@@ -11,7 +11,7 @@ from .to_float import to_float
 
 class Base(object):
     def __init__(self, time_indexing=None, plotter=None, plot_title=None, plot_legend=None,
-                 visdom_plotter=None, summary_writer=None):
+                 visdom_plotter=None, summary_writer=None, sacred_experiment=None):
         """ Basic metric
         """
 
@@ -32,6 +32,7 @@ class Base(object):
         self._visdom_plotter = visdom_plotter
         self._plot_title = plot_title
         self._plot_legend = plot_legend
+        self._sacred_experiment = sacred_experiment
 
         if summary_writer is not None:
             assert plot_title is not None, "a plot title is required"
@@ -93,12 +94,13 @@ class Base(object):
         if self._visdom_plotter is not None:
             self._visdom_plotter._update_xy(title=self._plot_title, legend=self._plot_legend, x=event_time, y=value)
 
+        if self._plot_legend:
+                tag = "{title}/{legend}".format(title=self._plot_title, legend=self._plot_legend)
+        else:
+            tag = self._plot_title
+
         # plot current value on tensorboard
         if self._summary_writer is not None:
-            if self._plot_legend:
-                tag = "{title}/{legend}".format(title=self._plot_title, legend=self._plot_legend)
-            else:
-                tag = self._plot_title
 
             if self._time_indexing:
                 opts = dict(global_step=len(self._history._times), walltime=event_time)
@@ -106,6 +108,10 @@ class Base(object):
                 opts = dict(global_step=event_time)
 
             self._summary_writer.add_scalar(tag=tag, scalar_value=value, **opts)
+
+        # Save values to database using sacred
+        if self._sacred_experiment is not None:
+            self._sacred_experiment.log_scalar(metric_name=tag, value=value)
 
         for hook in self.hooks_on_log:
             hook()
