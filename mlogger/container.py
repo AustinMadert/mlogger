@@ -9,12 +9,13 @@ import warnings
 
 class Container(object):
 
-    def __init__(self, **kwargs):
+    def __init__(self, sacred_experiment=None, **kwargs):
         """
         """
         super(Container, self).__init__()
 
         object.__setattr__(self, '_children_dict', {})
+        self._sacred_experiment = sacred_experiment
 
         for (key, value) in kwargs.items():
             setattr(self, key, value)
@@ -101,6 +102,12 @@ class Container(object):
                 plot_legend = child._plot_legend
                 if plot_title is not None:
                     child.plot_on_tensorboard(summary_writer, plot_title, plot_legend)
+
+    def checkpoint(self, model_path, name=None):
+        if self._sacred_experiment is None:
+            raise AttributeError("Container does not have sacred experiment.")
+        name = name if name else model_path
+        self._sacred_experiment.add_artifact(model_path, name=name)
 
     def __repr__(self):
         _repr = "Container()"
