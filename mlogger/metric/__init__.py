@@ -93,13 +93,13 @@ class TNT(Base):
 
 class Timer(Base):
     def __init__(self, plotter=None, plot_title=None, plot_legend=None, visdom_plotter=None, 
-                summary_writer=None, sacred_exp=sacred_exp):
+                summary_writer=None, sacred_exp=None):
 
         visdom_plotter = _deprecate_plotter_argument(plotter, visdom_plotter)
 
         super(Timer, self).__init__(time_indexing=False, plot_title=plot_title, plot_legend=plot_legend,
                                     visdom_plotter=visdom_plotter, summary_writer=summary_writer, 
-                                    sacred_exp=None)
+                                    sacred_exp=sacred_exp)
 
     def reset(self):
         self.start = time.time()
