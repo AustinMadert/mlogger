@@ -11,7 +11,7 @@ from .to_float import to_float
 
 class Base(object):
     def __init__(self, time_indexing=None, plotter=None, plot_title=None, plot_legend=None,
-                 visdom_plotter=None, summary_writer=None, sacred_experiment=None):
+                 visdom_plotter=None, summary_writer=None, sacred_exp=None):
         """ Basic metric
         """
 
@@ -32,7 +32,7 @@ class Base(object):
         self._visdom_plotter = visdom_plotter
         self._plot_title = plot_title
         self._plot_legend = plot_legend
-        self._sacred_experiment = sacred_experiment
+        self._sacred_exp = sacred_exp
 
         if summary_writer is not None:
             assert plot_title is not None, "a plot title is required"
@@ -175,3 +175,11 @@ class Base(object):
         self._plot_legend = plot_legend
 
         return self
+
+    def log_scalar(self, step: int = None) -> None:
+        if not self._sacred_exp:
+            msg = 'No sacred experiment has been supplied.'
+            raise AttributeError(msg)
+        name = self.__class__.__name__
+        self._sacred_exp.log_scalar(metric_name=name, value=self.value, step=step)
+        

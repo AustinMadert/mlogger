@@ -27,10 +27,11 @@ def _deprecate_plotter_argument(plotter, visdom_plotter):
 
 class Simple(Base):
     def __init__(self, time_indexing=None, plotter=None, plot_title=None, plot_legend=None,
-                 visdom_plotter=None, summary_writer=None):
+                 visdom_plotter=None, summary_writer=None, sacred_exp=None):
         visdom_plotter = _deprecate_plotter_argument(plotter, visdom_plotter)
         super(Simple, self).__init__(time_indexing=time_indexing, plot_title=plot_title, plot_legend=plot_legend,
-                                     visdom_plotter=visdom_plotter, summary_writer=summary_writer)
+                                     visdom_plotter=visdom_plotter, summary_writer=summary_writer, 
+                                     sacred_exp=sacred_exp)
 
     def reset(self):
         self._val = 0.
@@ -60,12 +61,13 @@ class Simple(Base):
 
 class TNT(Base):
     def __init__(self, tnt_meter, time_indexing=None, plotter=None, plot_title=None,
-                 plot_legend=None, visdom_plotter=None, summary_writer=None):
+                 plot_legend=None, visdom_plotter=None, summary_writer=None, sacred_exp=None):
 
         visdom_plotter = _deprecate_plotter_argument(plotter, visdom_plotter)
 
         super(TNT, self).__init__(time_indexing=time_indexing, plot_title=plot_title, plot_legend=plot_legend,
-                                  visdom_plotter=visdom_plotter, summary_writer=summary_writer)
+                                  visdom_plotter=visdom_plotter, summary_writer=summary_writer, 
+                                  sacred_exp=sacred_exp)
         self._tnt_meter = tnt_meter
 
     def reset(self):
@@ -90,12 +92,14 @@ class TNT(Base):
 
 
 class Timer(Base):
-    def __init__(self, plotter=None, plot_title=None, plot_legend=None, visdom_plotter=None, summary_writer=None):
+    def __init__(self, plotter=None, plot_title=None, plot_legend=None, visdom_plotter=None, 
+                summary_writer=None, sacred_exp=sacred_exp):
 
         visdom_plotter = _deprecate_plotter_argument(plotter, visdom_plotter)
 
         super(Timer, self).__init__(time_indexing=False, plot_title=plot_title, plot_legend=plot_legend,
-                                    visdom_plotter=visdom_plotter, summary_writer=summary_writer)
+                                    visdom_plotter=visdom_plotter, summary_writer=summary_writer, 
+                                    sacred_exp=None)
 
     def reset(self):
         self.start = time.time()
@@ -130,11 +134,12 @@ class Timer(Base):
 
 class Maximum(Base):
     def __init__(self, time_indexing=None, plotter=None, plot_title=None, plot_legend=None,
-                 visdom_plotter=None, summary_writer=None):
+                 visdom_plotter=None, summary_writer=None, sacred_exp=None):
 
         visdom_plotter = _deprecate_plotter_argument(plotter, visdom_plotter)
         super(Maximum, self).__init__(time_indexing=time_indexing, plot_title=plot_title, plot_legend=plot_legend,
-                                      visdom_plotter=visdom_plotter, summary_writer=summary_writer)
+                                      visdom_plotter=visdom_plotter, summary_writer=summary_writer, 
+                                      sacred_exp=sacred_exp)
 
     def reset(self):
         self._val = -np.inf
@@ -172,11 +177,12 @@ class Maximum(Base):
 
 class Minimum(Base):
     def __init__(self, time_indexing=None, plotter=None, plot_title=None, plot_legend=None,
-                 visdom_plotter=None, summary_writer=None):
+                 visdom_plotter=None, summary_writer=None, sacred_exp=None):
 
         visdom_plotter = _deprecate_plotter_argument(plotter, visdom_plotter)
         super(Minimum, self).__init__(time_indexing=time_indexing, plot_title=plot_title, plot_legend=plot_legend,
-                                      visdom_plotter=visdom_plotter, summary_writer=summary_writer)
+                                      visdom_plotter=visdom_plotter, summary_writer=summary_writer, 
+                                      sacred_exp=sacred_exp)
 
     def reset(self):
         self._val = np.inf
@@ -217,10 +223,11 @@ class Accumulator_(Base):
     Credits to the authors of pytorch/tnt for this.
     """
     def __init__(self, time_indexing, plotter=None, plot_title=None, plot_legend=None,
-                 visdom_plotter=None, summary_writer=None):
+                 visdom_plotter=None, summary_writer=None, sacred_exp=None):
         visdom_plotter = _deprecate_plotter_argument(plotter, visdom_plotter)
         super(Accumulator_, self).__init__(time_indexing=time_indexing, plot_title=plot_title, plot_legend=plot_legend,
-                                           visdom_plotter=visdom_plotter, summary_writer=summary_writer)
+                                           visdom_plotter=visdom_plotter, summary_writer=summary_writer, 
+                                           sacred_exp=sacred_exp)
 
     def reset(self):
         self._avg = 0
@@ -249,10 +256,11 @@ class Accumulator_(Base):
 
 class Average(Accumulator_):
     def __init__(self, time_indexing=None, plotter=None, plot_title=None, plot_legend=None,
-                 visdom_plotter=None, summary_writer=None):
+                 visdom_plotter=None, summary_writer=None, sacred_exp=None):
         visdom_plotter = _deprecate_plotter_argument(plotter, visdom_plotter)
         super(Average, self).__init__(time_indexing=time_indexing, plot_title=plot_title, plot_legend=plot_legend,
-                                      visdom_plotter=visdom_plotter, summary_writer=summary_writer)
+                                      visdom_plotter=visdom_plotter, summary_writer=summary_writer, 
+                                      sacred_exp=sacred_exp)
 
     @property
     def value(self):
@@ -269,10 +277,12 @@ class Average(Accumulator_):
 
 class Sum(Accumulator_):
     def __init__(self, time_indexing=None, plotter=None, plot_title=None,
-                 plot_legend=None, visdom_plotter=None, summary_writer=None):
+                 plot_legend=None, visdom_plotter=None, summary_writer=None, 
+                 sacred_exp=None):
         visdom_plotter = _deprecate_plotter_argument(plotter, visdom_plotter)
         super(Sum, self).__init__(time_indexing=time_indexing, plot_title=plot_title, plot_legend=plot_legend,
-                                  visdom_plotter=visdom_plotter, summary_writer=summary_writer)
+                                  visdom_plotter=visdom_plotter, summary_writer=summary_writer, 
+                                  sacred_exp=sacred_exp)
 
     @property
     def value(self):

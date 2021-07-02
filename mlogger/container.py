@@ -9,13 +9,13 @@ import warnings
 
 class Container(object):
 
-    def __init__(self, sacred_experiment=None, **kwargs):
+    def __init__(self, sacred_exp=None, **kwargs):
         """
         """
         super(Container, self).__init__()
 
         object.__setattr__(self, '_children_dict', {})
-        self._sacred_experiment = sacred_experiment
+        self._sacred_exp = sacred_exp
 
         for (key, value) in kwargs.items():
             setattr(self, key, value)
@@ -27,6 +27,8 @@ class Container(object):
 
         self._children_dict[key] = value
         object.__setattr__(self, key, value)
+        if self._sacred_exp:
+            self._children_dict[key]._sacred_exp = self._sacred_exp
 
     def __delattr__(self, key):
         object.__delattr__(self, key)
