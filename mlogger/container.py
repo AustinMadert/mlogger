@@ -14,11 +14,11 @@ class Container(object):
         """
         """
         super(Container, self).__init__()
-        
-        if sacred_exp:
-            self._sacred_exp = sacred_exp
 
         object.__setattr__(self, '_children_dict', {})
+
+        if sacred_exp:
+            self._sacred_exp = sacred_exp
 
         for (key, value) in kwargs.items():
             setattr(self, key, value)
@@ -31,7 +31,7 @@ class Container(object):
 
         self._children_dict[key] = value
         object.__setattr__(self, key, value)
-        if '_sacred_exp' in self.__dict__:
+        if not isinstance(value, Experiment) and '_sacred_exp' in self.__dict__:
             self._children_dict[key]._sacred_exp = self._sacred_exp
 
     def __delattr__(self, key):
