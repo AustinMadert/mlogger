@@ -5,6 +5,7 @@ import numpy as np
 from builtins import dict
 from collections import defaultdict, OrderedDict
 import warnings
+from sacred import Experiment
 
 
 class Container(object):
@@ -13,21 +14,24 @@ class Container(object):
         """
         """
         super(Container, self).__init__()
+        
+        if sacred_exp:
+            self._sacred_exp = sacred_exp
 
         object.__setattr__(self, '_children_dict', {})
-        self._sacred_exp = sacred_exp
 
         for (key, value) in kwargs.items():
             setattr(self, key, value)
 
     def __setattr__(self, key, value):
-        if not isinstance(value, (mlogger.metric.Base, mlogger.Config, Container)):
+        types = (mlogger.metric.Base, mlogger.Config, Container, Experiment)
+        if not isinstance(value, types):
             raise TypeError("Container object cannot store object with type '{}' (error for key {})"
                             .format(type(value), key))
 
         self._children_dict[key] = value
         object.__setattr__(self, key, value)
-        if self._sacred_exp:
+        if '_sacred_exp' in self.__dict__:
             self._children_dict[key]._sacred_exp = self._sacred_exp
 
     def __delattr__(self, key):
@@ -106,16 +110,16 @@ class Container(object):
                     child.plot_on_tensorboard(summary_writer, plot_title, plot_legend)
 
     def checkpoint(self, model_path, name=None):
-        if self._sacred_experiment is None:
+        if not '_sacred_exp' in self.__dict__:
             raise AttributeError("Container does not have sacred experiment.")
         name = name if name else model_path
-        self._sacred_experiment.add_artifact(model_path, name=name)
+        self._sacred_exp.add_artifact(model_path, name=name)
 
     def __repr__(self):
         _repr = "Container()"
         return _repr
 
-    def save_to(self, filename):
+    def save_to_file(self, filename):
         with open(filename, "w") as f:
             json.dump(self.state_dict(), f)
 

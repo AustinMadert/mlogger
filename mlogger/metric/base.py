@@ -110,8 +110,8 @@ class Base(object):
             self._summary_writer.add_scalar(tag=tag, scalar_value=value, **opts)
 
         # Save values to database using sacred
-        if self._sacred_experiment is not None:
-            self._sacred_experiment.log_scalar(metric_name=tag, value=value)
+        if self._sacred_exp is not None:
+            self._sacred_exp.log_scalar(metric_name=tag, value=value)
 
         for hook in self.hooks_on_log:
             hook()
